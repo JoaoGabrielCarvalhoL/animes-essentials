@@ -5,7 +5,7 @@ import br.com.carv.essentials.domain.Anime;
 import br.com.carv.essentials.dto.request.AnimeInsertRequest;
 import br.com.carv.essentials.dto.request.AnimeUpdateRequest;
 import br.com.carv.essentials.dto.response.AnimeResponse;
-import br.com.carv.essentials.exception.ResourceNotFound;
+import br.com.carv.essentials.exception.ResourceNotFoundException;
 import br.com.carv.essentials.mapper.AnimeMapper;
 import br.com.carv.essentials.repository.AnimeRepository;
 import br.com.carv.essentials.service.AnimeService;
@@ -35,7 +35,7 @@ public class AnimeServiceImpl implements AnimeService {
     public AnimeResponse findByKey(Long key) {
         logger.info("Getting Anime by id: " + key);
         AnimeResponse anime = animeRepository.findById(key).filter(Anime::getIsActive).map(mapper::toAnimeResponse)
-                .orElseThrow(() -> new ResourceNotFound("Anime not found into database"));
+                .orElseThrow(() -> new ResourceNotFoundException("Anime not found into database"));
         anime.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(AnimeControllerImpl.class).findById(key)).withSelfRel());
         return anime;
     }
@@ -93,7 +93,7 @@ public class AnimeServiceImpl implements AnimeService {
     }
 
     private Anime findByIdUtil(Long id) {
-        return animeRepository.findById(id).orElseThrow(() -> new ResourceNotFound("Anime not found into database!"));
+        return animeRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Anime not found into database!"));
     }
 
 }

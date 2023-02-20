@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -32,7 +33,7 @@ public interface AnimeController {
     @PostMapping(produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
             consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     @ResponseStatus(HttpStatus.CREATED)
-    ResponseEntity<AnimeResponse> save(@RequestBody AnimeInsertRequest animeInsertRequest);
+    ResponseEntity<AnimeResponse> save(@RequestBody @Valid AnimeInsertRequest animeInsertRequest);
 
 
     @Operation(summary = "Update anime", description = "Update a anime")
@@ -45,7 +46,7 @@ public interface AnimeController {
     @PutMapping(produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
             consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    ResponseEntity<AnimeResponse> update(@RequestBody AnimeUpdateRequest animeUpdateRequest);
+    ResponseEntity<AnimeResponse> update(@RequestBody @Valid AnimeUpdateRequest animeUpdateRequest);
 
     @Operation(summary = "Find by id", description = "Find anime by id")
     @ApiResponses(value = {
