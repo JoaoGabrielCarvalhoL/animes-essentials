@@ -73,7 +73,10 @@ public class AnimeServiceImpl implements AnimeService {
     @Override
     public Page<AnimeResponse> findAllPaginated(Pageable pageable) {
         logger.info("Getting all animes paginated");
-        List<AnimeResponse> response = findAll();
+        List<AnimeResponse> response = animeRepository.findAll(pageable).stream().filter(Anime::getIsActive)
+                .map(mapper::toAnimeResponse).collect(Collectors.toList());
+        response.stream().forEach(anime -> anime.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(AnimeControllerImpl.class)
+                .findById(anime.getKey())).withSelfRel()));
         return new PageImpl<AnimeResponse>(response, pageable, response.size());
     }
 
@@ -96,4 +99,8 @@ public class AnimeServiceImpl implements AnimeService {
         return animeRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Anime not found into database!"));
     }
 
+    //Only reference.
+    public Page<Anime> anotherFindAllPaginated(Pageable pageable) {
+        return animeRepository.findAll(pageable);
+    }
 }
