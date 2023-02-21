@@ -86,7 +86,7 @@ public interface AnimeController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error")})
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    ResponseEntity<Void> delete(final Long id);
+    ResponseEntity<Void> delete(@PathVariable("id") final Long id);
 
 
     @Operation(summary = "Getting animes", description = "Getting animes by name")
