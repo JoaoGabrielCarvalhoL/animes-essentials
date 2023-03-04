@@ -7,6 +7,7 @@ import br.com.carv.essentials.dto.response.AnimeResponseClient;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.function.ServerRequest;
 
 import java.util.Arrays;
 import java.util.List;
@@ -50,4 +51,5 @@ public class RestTemplateExample {
 
 
     }
+
 }
