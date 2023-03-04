@@ -19,7 +19,7 @@ public abstract class GenericEntity implements Serializable {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime updatedAt;
 
-    private Boolean isActive;
+    private Boolean isActive = true;
 
     public Long getId() {
         return id;

@@ -44,7 +44,7 @@ public class AnimeServiceImpl implements AnimeService {
     public AnimeResponse save(AnimeInsertRequest animeInsertRequest) {
         logger.info("Saving into database");
         Anime anime = mapper.toAnime(animeInsertRequest);
-        anime.changeActive(true);
+        //anime.changeActive(true);
         animeRepository.save(anime);
         return mapper.toAnimeResponse(anime).add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(AnimeControllerImpl.class)
                 .findById(anime.getId())).withSelfRel());
@@ -53,7 +53,9 @@ public class AnimeServiceImpl implements AnimeService {
     @Override
     public AnimeResponse update(AnimeUpdateRequest animeUpdateRequest) {
         logger.info("Update Anime");
-        Anime anime = animeRepository.saveAndFlush(mapper.toAnime(animeUpdateRequest));
+        Anime anime = mapper.toAnime(animeUpdateRequest);
+        //anime.changeActive(true);
+        animeRepository.saveAndFlush(anime);
         return mapper.toAnimeResponse(anime).add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(AnimeControllerImpl.class)
                 .findById(anime.getId())).withSelfRel());
 
@@ -68,6 +70,7 @@ public class AnimeServiceImpl implements AnimeService {
                 .findById(anime.getKey())).withSelfRel()));
 
        return collect;
+
     }
 
     @Override
