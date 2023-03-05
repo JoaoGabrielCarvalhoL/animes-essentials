@@ -1,19 +1,28 @@
 package br.com.carv.essentials.integration;
 
+import br.com.carv.essentials.domain.User;
 import br.com.carv.essentials.dto.request.AnimeInsertRequest;
 import br.com.carv.essentials.dto.request.AnimeUpdateRequest;
 import br.com.carv.essentials.dto.response.AnimeResponse;
+import br.com.carv.essentials.repository.UserRepository;
 import br.com.carv.essentials.service.AnimeService;
 import br.com.carv.essentials.util.AnimeCreator;
+import br.com.carv.essentials.util.UserCreator;
 import br.com.carv.essentials.wrapper.PageableResponse;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -30,13 +39,28 @@ import java.util.List;
 public class AnimeControllerIntegration {
 
     @Autowired
+    @Qualifier(value = "testTemplateRoleUser")
     private TestRestTemplate testTemplate;
-
-    @LocalServerPort
-    private int port;
 
     @Autowired
     private AnimeService animeService;
+
+    @Autowired
+    private UserRepository userRepository;
+
+
+    @TestConfiguration
+    @Lazy
+    static class Config {
+        @Bean(name = "testTemplateRoleUser")
+        public TestRestTemplate testRestTemplateRoleUserCreator(@Value("${local.server.port}") int port) {
+            RestTemplateBuilder restTemplateBuilder = new RestTemplateBuilder()
+                    .rootUri("http://localhost:"+port)
+                    .basicAuthentication("Batman", "BruceWayne");
+            return new TestRestTemplate(restTemplateBuilder);
+        }
+    }
+
 
     @Test
     @DisplayName("List returns list of anime inside page object when successful")
@@ -44,6 +68,9 @@ public class AnimeControllerIntegration {
 
         AnimeInsertRequest insertRequest = AnimeCreator.createAnimeInsertToBeSaved();
         animeService.save(insertRequest);
+
+        User user = UserCreator.createUserAllRoles();
+        userRepository.save(user);
 
         ResponseEntity<PageableResponse<AnimeResponse>> exchange = testTemplate.exchange("/animes/paginated", HttpMethod.GET, null, new ParameterizedTypeReference<PageableResponse<AnimeResponse>>() {
         });
@@ -57,6 +84,9 @@ public class AnimeControllerIntegration {
     @Test
     @DisplayName("List returns list of anime when successful")
     void list_ReturnsListOfAnimes_WhenSuccessful() {
+
+        User user = UserCreator.createUserAllRoles();
+        userRepository.save(user);
 
         AnimeInsertRequest insertRequest = AnimeCreator.createAnimeInsertToBeSaved();
         animeService.save(insertRequest);

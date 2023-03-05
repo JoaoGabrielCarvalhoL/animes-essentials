@@ -2,12 +2,12 @@ package br.com.carv.essentials.bootstrap;
 
 import br.com.carv.essentials.domain.Anime;
 import br.com.carv.essentials.dto.request.AnimeInsertRequest;
-import br.com.carv.essentials.dto.response.AnimeResponse;
 import br.com.carv.essentials.dto.response.AnimeResponseClient;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.servlet.function.ServerRequest;
 
 import java.util.Arrays;
 import java.util.List;

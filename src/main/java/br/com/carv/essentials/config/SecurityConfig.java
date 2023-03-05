@@ -1,12 +1,10 @@
 package br.com.carv.essentials.config;
 
+import br.com.carv.essentials.service.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.authentication.configuration.EnableGlobalAuthentication;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -21,25 +19,48 @@ import java.util.logging.Logger;
 
 @Configuration
 @EnableMethodSecurity
+@EnableWebSecurity
 public class SecurityConfig  {
 
+    private final UserService userService;
     private final Logger logger = Logger.getLogger(SecurityConfig.class.getSimpleName());
+
+    public SecurityConfig(UserService userService) {
+        this.userService = userService;
+    }
+
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
                 .csrf().disable()
                 .authorizeHttpRequests((authorization) -> authorization.anyRequest().authenticated())
-                .httpBasic(Customizer.withDefaults()).formLogin();
+                .httpBasic(Customizer.withDefaults()).formLogin()
+                .and().authenticationProvider(authProvider());
         return httpSecurity.build();
 
     }
 
     @Bean
     public InMemoryUserDetailsManager userDetailsService() {
-        PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
-        UserDetails user = User.withUsername("Joao").password(passwordEncoder.encode("batman"))
+        UserDetails user = User.withUsername("Batman").password(encoder().encode("BruceWayne"))
                 .roles("USER", "ADMIN").build();
         return new InMemoryUserDetailsManager(user);
     }
+
+    @Bean
+    public DaoAuthenticationProvider authProvider() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userService);
+        authProvider.setPasswordEncoder(encoder());
+        return authProvider;
+    }
+
+    @Bean
+    public PasswordEncoder encoder() {
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    }
+
+
+
 }
